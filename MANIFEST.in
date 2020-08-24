@@ -1,0 +1,4 @@
+include README.md
+recursive-include octoprint_RPLlogger/templates *
+recursive-include octoprint_RPLlogger/translations *
+recursive-include octoprint_RPLlogger/static *
