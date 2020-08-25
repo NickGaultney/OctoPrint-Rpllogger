@@ -22,11 +22,11 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 			url="https://en.wikipedia.org/wiki/Hello_world"
 		)
 
-#	def get_template_configs(self):
-#	    return [
-#	        dict(type="navbar", custom_bindings=False),
-#	        dict(type="settings", custom_bindings=False)
-#	    ]
+	def get_template_configs(self):
+	    return [
+	        dict(type="navbar", custom_bindings=False),
+	        dict(type="settings", custom_bindings=False)
+	    ]
 
 	##~~ AssetPlugin mixin
 
