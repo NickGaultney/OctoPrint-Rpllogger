@@ -34,16 +34,16 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ EventPlugin Mixin
 
 	def on_event(self, event, payload):
-		self._logger.info(event)
+		self._logger.info("*** " + event + " ***")
 
 		if event == "PrintStarted":
-			on_print_started(payload)
+			self.on_print_started(payload)
 		elif event == "PrintFailed" or event == "PrintCancelled":
-			on_print_stopped(payload)
+			self.on_print_stopped(payload)
 		elif event == "PrintDone":
-			on_print_done(payload)
+			self.on_print_done(payload)
 		elif event == "Startup":
-			on_startup()
+			self.on_startup()
 
 	def on_print_started(payload):
 		# UPDATE STATUS OF PRINTER
@@ -61,9 +61,9 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	def on_startup():
 		# Create Printer if_not_exists
 		url = get_url + get_api_path + "printers_api"
-		name = get_printer_name()
+		name = self.get_printer_name()
 		if not name == "":
-			payload = {"name" : get_printer_name(), "status" : "0"}
+			payload = {"name" : self.get_printer_name(), "status" : "0"}
 			result = requests.post(url, data = payload)
 
 	##~~ Helper Methods
