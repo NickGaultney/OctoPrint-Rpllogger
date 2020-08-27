@@ -110,41 +110,41 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	##~~ Extract Meta Data
 
 	def find_meta_data(path, *args):
-	    # initial setup
+		# initial setup
 		path = path
-	    dictionary = dict()
-	    for arg in args:
-	        dictionary[arg] = ""
+		dictionary = dict()
+		for arg in args:
+			dictionary[arg] = ""
 
-	    # read_file_line_by_line()
-	    with open(path) as file:
-	        for line in file:
-	            if line.startswith(";"):
-	                examine_line(dictionary, line, ",")
-	            else:
-	                file.close()
-	                break
+		# read_file_line_by_line()
+		with open(path) as file:
+			for line in file:
+				if line.startswith(";"):
+					examine_line(dictionary, line, ",")
+				else:
+					file.close()
+					break
 
-	    # self.__reverse_read_file()
-	    file = FileReadBackwards(path)
-	    for line in file:
-	        if line.startswith(";") and ":" in line:
-	            examine_line(dictionary, line, ":")
-	        else:
-	            file.close()
-	            break
-	    return dictionary
+		# self.__reverse_read_file()
+		file = FileReadBackwards(path)
+		for line in file:
+			if line.startswith(";") and ":" in line:
+				examine_line(dictionary, line, ":")
+			else:
+				file.close()
+				break
+		return dictionary
 
 
 	def examine_line(dictionary, line, splitter):
-	    strip_chars_start_end_regex = re.compile(r'^(;)+( *)|$\n')
-	    striped_line = strip_chars_start_end_regex.sub('', line)
-	    try:
-	        key, value = striped_line.split(splitter)
-	        if key in dictionary.keys():
-	            dictionary[key] = value.strip()
-	    finally:
-	        return
+		strip_chars_start_end_regex = re.compile(r'^(;)+( *)|$\n')
+		striped_line = strip_chars_start_end_regex.sub('', line)
+		try:
+			key, value = striped_line.split(splitter)
+			if key in dictionary.keys():
+				dictionary[key] = value.strip()
+		finally:
+			return
 
 	##~~ AssetPlugin mixin
 
