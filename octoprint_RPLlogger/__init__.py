@@ -111,7 +111,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
 	def find_meta_data(path, *args):
     # initial setup
-    path = path
+	path = path
     dictionary = dict()
     for arg in args:
         dictionary[arg] = ""
