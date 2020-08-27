@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import absolute_import
 import requests
+import re
+from file_read_backwards import FileReadBackwards
 
 ### (Don't forget to remove me)
 # This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
@@ -36,6 +38,9 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	def on_event(self, event, payload):
 		self._logger.info("*** " + event + " ***")
 
+		if self.get_printer_name() == "":
+			return
+
 		if event == "PrintStarted":
 			self.on_print_started(payload)
 		elif event == "PrintFailed" or event == "PrintCancelled":
@@ -43,29 +48,20 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 		elif event == "PrintDone":
 			self.on_print_done(payload)
 		elif event == "Startup":
-			self.on_startup()
+			self.create_printer()
 
 	def on_print_started(self, payload):
 		# UPDATE STATUS OF PRINTER
-		# ADD TO PRINT LOGS
-		x=5
+		self.update_printer_status(1)
+		# CREATE PRINT LOGS
+		self.create_print_log(payload["path"])
 
 	def on_print_stopped(self, payload):
-		# Blah
-		x=5
+		self.update_printer_status(0)
 
 	def on_print_done(self, payload):
-		# Blah
-		x=5
+		self.update_printer_status(2)
 
-	def on_startup(self):
-		# Create Printer if_not_exists
-		url = self.get_url() + self.get_api_path() + "printers_api"
-		name = self.get_printer_name()
-		self._logger.info("*** " + name + " ***")
-		if not name == "":
-			payload = {"name" : self.get_printer_name(), "status" : "0"}
-			result = requests.post(url, data = payload)
 
 	##~~ Helper Methods
 
@@ -73,18 +69,82 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 		return self._settings.get(["url"])
 
 	def get_api_path(self):
-		return "/api/v1/"
+		return self._settings.get(["url"]) + "/api/v1/"
 
 	def get_printer_name(self):
 		return self._settings.get(["printer_name"])
+
+	def create_printer(self):
+		# Create Printer if_not_exists
+		url = self.get_api_path() + "printers_api"
+		name = self.get_printer_name()
+		payload = {"name" : self.get_printer_name(), "status" : "0"}
+		result = requests.post(url, data = payload)
+		self._logger.info("********** RPL LOGS => " + "Printer Created: " + name)
 
 	# Status Chart:
 	# 0 = Idle
 	# 1 = Printing
 	# 2 = PrintDone
-	def update_printer_status(self):
-		# Blah
-		x=5
+	def update_printer_status(self, status):
+		name = self.get_printer_name()
+		url = self.get_api_path() + "printers_api/" + name + "/edit"
+		payload = {"status" : str(status)}
+		result = requests.post(url, data = payload)
+		self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + str(status))
+
+	def create_print_log(payload, filament_weight, print_time, cost):
+		url = self.get_api_path() + "print_logs_api"
+		name = self.get_printer_name()
+		metadata = find_meta_data(payload["path"], 'Build time', 'Plastic weight')
+		payload = { "printer" : payload["name"], 
+					"file_name" : filename, 
+					"status" : "1", 
+					"print_time" : metadata["Build time"],
+					"filament_weight" : "Plastic weight"}
+		result = requests.post(url, data = payload)
+		self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
+		self._logger.info("********** RPL LOGS => " + "Print Log Added")
+
+
+	##~~ Extract Meta Data
+
+	def find_meta_data(path, *args):
+    # initial setup
+    path = path
+    dictionary = dict()
+    for arg in args:
+        dictionary[arg] = ""
+
+    # read_file_line_by_line()
+    with open(path) as file:
+        for line in file:
+            if line.startswith(";"):
+                examine_line(dictionary, line, ",")
+            else:
+                file.close()
+                break
+
+    # self.__reverse_read_file()
+    file = FileReadBackwards(path)
+    for line in file:
+        if line.startswith(";") and ":" in line:
+            examine_line(dictionary, line, ":")
+        else:
+            file.close()
+            break
+    return dictionary
+
+
+	def examine_line(dictionary, line, splitter):
+	    strip_chars_start_end_regex = re.compile(r'^(;)+( *)|$\n')
+	    striped_line = strip_chars_start_end_regex.sub('', line)
+	    try:
+	        key, value = striped_line.split(splitter)
+	        if key in dictionary.keys():
+	            dictionary[key] = value.strip()
+	    finally:
+	        return
 
 	##~~ AssetPlugin mixin
 
