@@ -40,7 +40,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 			on_print_stopped(payload)
 		elif event == "PrintDone":
 			on_print_done(payload)
-		elif event == "Startup"
+		elif event == "Startup":
 			on_startup()
 
 	def on_print_started(payload):
