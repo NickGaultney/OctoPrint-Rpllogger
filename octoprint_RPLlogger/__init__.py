@@ -46,12 +46,15 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	def on_print_started(payload):
 		# UPDATE STATUS OF PRINTER
 		# ADD TO PRINT LOGS
+		x=5
 
 	def on_print_stopped(payload):
 		# Blah
+		x=5
 
 	def on_print_done(payload):
 		# Blah
+		x=5
 
 	def on_startup():
 		# Create Printer if_not_exists
@@ -78,6 +81,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	# 2 = PrintDone
 	def update_printer_status():
 		# Blah
+		x=5
 
 	##~~ AssetPlugin mixin
 
