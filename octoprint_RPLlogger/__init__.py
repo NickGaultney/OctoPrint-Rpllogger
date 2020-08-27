@@ -68,13 +68,13 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
 	##~~ Helper Methods
 
-	def get_url():
+	def get_url(self):
 		self._settings.get(["url"])
 
 	def get_api_path():
 		"/api/v1/"
 
-	def get_printer_name():
+	def get_printer_name(self):
 		self._settings.get(["printer_name"])
 
 	# Status Chart:
