@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import absolute_import
+import requests
 
 ### (Don't forget to remove me)
 # This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
@@ -13,13 +14,15 @@ import octoprint.plugin
 
 class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
                       octoprint.plugin.AssetPlugin,
-                      octoprint.plugin.TemplatePlugin):
+                      octoprint.plugin.TemplatePlugin,
+                      octoprint.plugin.EventHandlerPlugin):
 
 	##~~ SettingsPlugin mixin
 
 	def get_settings_defaults(self):
 		return dict(
-			url="https://en.wikipedia.org/wiki/Hello_world"
+			url="http://10.147.20.155:3000",
+			printer_name=""
 		)
 
 	def get_template_configs(self):
@@ -27,6 +30,54 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	        dict(type="navbar", custom_bindings=False),
 	        dict(type="settings", custom_bindings=False)
 	    ]
+
+    ##~~ EventPlugin Mixin
+
+	def on_event(event, payload):
+		if event == "PrintStarted":
+			on_print_started(payload)
+		elif event == "PrintFailed" or event == "PrintCancelled":
+			on_print_stopped(payload)
+		elif event == "PrintDone":
+			on_print_done(payload)
+		elif event == "Startup"
+			on_startup()
+
+	def on_print_started(payload):
+		# UPDATE STATUS OF PRINTER
+		# ADD TO PRINT LOGS
+
+	def on_print_stopped(payload):
+		# Blah
+
+	def on_print_done(payload):
+		# Blah
+
+	def on_startup():
+		# Create Printer if_not_exists
+		url = get_url + get_api_path + "printers_api"
+		name = get_printer_name()
+		if not name == "":
+			payload = {"name" : get_printer_name(), "status" : "0"}
+			result = requests.post(url, data = payload)
+
+	##~~ Helper Methods
+
+	def get_url():
+		self._settings.get(["url"])
+
+	def get_api_path():
+		"/api/v1/"
+
+	def get_printer_name():
+		self._settings.get(["printer_name"])
+
+	# Status Chart:
+	# 0 = Idle
+	# 1 = Printing
+	# 2 = PrintDone
+	def update_printer_status():
+		# Blah
 
 	##~~ AssetPlugin mixin
 
