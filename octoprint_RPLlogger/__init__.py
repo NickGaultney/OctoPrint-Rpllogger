@@ -60,7 +60,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
 	def on_startup(self):
 		# Create Printer if_not_exists
-		url = get_url + get_api_path + "printers_api"
+		url = self.get_url() + self.get_api_path() + "printers_api"
 		name = self.get_printer_name()
 		if not name == "":
 			payload = {"name" : self.get_printer_name(), "status" : "0"}
