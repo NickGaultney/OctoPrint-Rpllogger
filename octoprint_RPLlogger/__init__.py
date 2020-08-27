@@ -34,6 +34,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ EventPlugin Mixin
 
 	def on_event(event, payload):
+		self._logger.info(event)
+		
 		if event == "PrintStarted":
 			on_print_started(payload)
 		elif event == "PrintFailed" or event == "PrintCancelled":
