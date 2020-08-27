@@ -45,16 +45,16 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 		elif event == "Startup":
 			self.on_startup()
 
-	def on_print_started(payload):
+	def on_print_started(self, payload):
 		# UPDATE STATUS OF PRINTER
 		# ADD TO PRINT LOGS
 		x=5
 
-	def on_print_stopped(payload):
+	def on_print_stopped(self, payload):
 		# Blah
 		x=5
 
-	def on_print_done(payload):
+	def on_print_done(self, payload):
 		# Blah
 		x=5
 
@@ -71,7 +71,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	def get_url(self):
 		self._settings.get(["url"])
 
-	def get_api_path():
+	def get_api_path(self):
 		"/api/v1/"
 
 	def get_printer_name(self):
@@ -81,7 +81,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	# 0 = Idle
 	# 1 = Printing
 	# 2 = PrintDone
-	def update_printer_status():
+	def update_printer_status(self):
 		# Blah
 		x=5
 
