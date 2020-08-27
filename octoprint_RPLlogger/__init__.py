@@ -110,30 +110,30 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	##~~ Extract Meta Data
 
 	def find_meta_data(path, *args):
-    # initial setup
-	path = path
-    dictionary = dict()
-    for arg in args:
-        dictionary[arg] = ""
+	    # initial setup
+		path = path
+	    dictionary = dict()
+	    for arg in args:
+	        dictionary[arg] = ""
 
-    # read_file_line_by_line()
-    with open(path) as file:
-        for line in file:
-            if line.startswith(";"):
-                examine_line(dictionary, line, ",")
-            else:
-                file.close()
-                break
+	    # read_file_line_by_line()
+	    with open(path) as file:
+	        for line in file:
+	            if line.startswith(";"):
+	                examine_line(dictionary, line, ",")
+	            else:
+	                file.close()
+	                break
 
-    # self.__reverse_read_file()
-    file = FileReadBackwards(path)
-    for line in file:
-        if line.startswith(";") and ":" in line:
-            examine_line(dictionary, line, ":")
-        else:
-            file.close()
-            break
-    return dictionary
+	    # self.__reverse_read_file()
+	    file = FileReadBackwards(path)
+	    for line in file:
+	        if line.startswith(";") and ":" in line:
+	            examine_line(dictionary, line, ":")
+	        else:
+	            file.close()
+	            break
+	    return dictionary
 
 
 	def examine_line(dictionary, line, splitter):
