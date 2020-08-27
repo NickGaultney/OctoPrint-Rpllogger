@@ -62,6 +62,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 		# Create Printer if_not_exists
 		url = self.get_url() + self.get_api_path() + "printers_api"
 		name = self.get_printer_name()
+		self._logger.info("*** " + name + " ***")
 		if not name == "":
 			payload = {"name" : self.get_printer_name(), "status" : "0"}
 			result = requests.post(url, data = payload)
