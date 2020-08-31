@@ -106,11 +106,11 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         url = self.get_api_path() + "print_logs_api"
         name = self.get_printer_name()
         metadata = self.find_meta_data(payload["path"], 'Build time', 'Plastic weight')
-        payload = { "printer" : name, 
+        payload = { "printer_name" : name, 
                     "file_name" : payload["name"], 
                     "status" : "1", 
                     "print_time" : metadata["Build time"],
-                    "filament_weight" : "Plastic weight"}
+                    "filament_weight" : metadata["Plastic weight"]}
         result = requests.post(url, data = payload)
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
