@@ -104,7 +104,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         url = self.get_api_path() + "printers_api/edit"
         payload = {"name" : name, "status" : str(status)}
         result = requests.post(url, data = payload)
-        self.print_log_id = json.loads(json.text)["id"]
+        self.print_log_id = json.loads(result.text)["id"]
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + str(status))
 
