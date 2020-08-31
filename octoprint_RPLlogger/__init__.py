@@ -115,7 +115,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
 	##~~ Extract Meta Data
 
-	def find_meta_data(path, *args):
+	def find_meta_data(self, path, *args):
 		# initial setup
 		path = path
 		dictionary = dict()
@@ -142,7 +142,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 		return dictionary
 
 
-	def examine_line(dictionary, line, splitter):
+	def examine_line(self, dictionary, line, splitter):
 		strip_chars_start_end_regex = re.compile(r'^(;)+( *)|$\n')
 		striped_line = strip_chars_start_end_regex.sub('', line)
 		try:
