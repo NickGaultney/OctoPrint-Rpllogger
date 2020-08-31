@@ -123,11 +123,11 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
 
     def update_print_log(self, status):
-        if print_log_id == None: return
+        if self.print_log_id == None: return
 
         self._logger.info("********** RPL LOGS => " + "update_log_status")
         url = self.get_api_path() + "print_logs_api/edit"
-        payload = {"id" : print_log_id, "status" : status}
+        payload = {"id" : self.print_log_id, "status" : status}
         result = requests.post(url, data = payload)
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + status)
