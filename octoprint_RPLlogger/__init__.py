@@ -51,15 +51,18 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 			self.create_printer()
 
 	def on_print_started(self, payload):
+		self._logger.info("********** RPL LOGS => " + "on_print_started")
 		# UPDATE STATUS OF PRINTER
 		self.update_printer_status(1)
 		# CREATE PRINT LOGS
 		self.create_print_log(payload)
 
 	def on_print_stopped(self, payload):
+		self._logger.info("********** RPL LOGS => " + "on_print_stopped")
 		self.update_printer_status(0)
 
 	def on_print_done(self, payload):
+		self._logger.info("********** RPL LOGS => " + "on_print_done")
 		self.update_printer_status(2)
 
 
@@ -87,24 +90,27 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 	# 1 = Printing
 	# 2 = PrintDone
 	def update_printer_status(self, status):
+		self._logger.info("********** RPL LOGS => " + "update_printer_status")
 		name = self.get_printer_name()
-		url = self.get_api_path() + "printers_api/" + name + "/edit"
-		payload = {"status" : str(status)}
+		url = self.get_api_path() + "printers_api/edit"
+		payload = {"name" : name, "status" : str(status)}
 		result = requests.post(url, data = payload)
+		self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
 		self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + str(status))
 
 	def create_print_log(self, payload):
+		self._logger.info("********** RPL LOGS => " + "create_print_log")
 		url = self.get_api_path() + "print_logs_api"
 		name = self.get_printer_name()
 		metadata = find_meta_data(payload["path"], 'Build time', 'Plastic weight')
-		payload = { "printer" : payload["name"], 
-					"file_name" : filename, 
+		payload = { "printer" : name, 
+					"file_name" : payload["name"], 
 					"status" : "1", 
 					"print_time" : metadata["Build time"],
 					"filament_weight" : "Plastic weight"}
 		result = requests.post(url, data = payload)
+		self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
 		self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
-		self._logger.info("********** RPL LOGS => " + "Print Log Added")
 
 
 	##~~ Extract Meta Data
