@@ -130,7 +130,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         with open(path) as file:
             for line in file:
                 if line.startswith(";"):
-                    examine_line(dictionary, line, ",")
+                    self.examine_line(dictionary, line, ",")
                 else:
                     file.close()
                     break
@@ -139,7 +139,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         file = FileReadBackwards(path)
         for line in file:
             if line.startswith(";") and ":" in line:
-                examine_line(dictionary, line, ":")
+                self.examine_line(dictionary, line, ":")
             else:
                 file.close()
                 break
