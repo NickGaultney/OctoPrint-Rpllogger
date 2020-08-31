@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import requests
 import re
 from file_read_backwards import FileReadBackwards
+import json
 
 ### (Don't forget to remove me)
 # This is a basic skeleton for your plugin's __init__.py. You probably want to adjust the class name of your plugin
@@ -18,6 +19,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
                       octoprint.plugin.AssetPlugin,
                       octoprint.plugin.TemplatePlugin,
                       octoprint.plugin.EventHandlerPlugin):
+
+    print_log_id = None
 
     ##~~ SettingsPlugin mixin
 
@@ -59,10 +62,12 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
     def on_print_stopped(self, payload):
         self._logger.info("********** RPL LOGS => " + "on_print_stopped")
+        self.update_print_log(3)
         self.update_printer_status(0)
 
     def on_print_done(self, payload):
         self._logger.info("********** RPL LOGS => " + "on_print_done")
+        self.update_print_log(2)
         self.update_printer_status(2)
 
 
@@ -92,12 +97,14 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     # 0 = Idle
     # 1 = Printing
     # 2 = PrintDone
+    # 3 = Failed
     def update_printer_status(self, status):
         self._logger.info("********** RPL LOGS => " + "update_printer_status")
         name = self.get_printer_name()
         url = self.get_api_path() + "printers_api/edit"
         payload = {"name" : name, "status" : str(status)}
         result = requests.post(url, data = payload)
+        self.print_log_id = json.loads(json.text)["id"]
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + str(status))
 
@@ -115,6 +122,16 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
 
+    def update_print_log(self, status):
+        if print_log_id == None: return
+
+        self._logger.info("********** RPL LOGS => " + "update_log_status")
+        url = self.get_api_path() + "print_logs_api/edit"
+        payload = {"id" : print_log_id, "status" : status}
+        result = requests.post(url, data = payload)
+        self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
+        self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + status)
+        
 
     ##~~ Extract Meta Data
 
