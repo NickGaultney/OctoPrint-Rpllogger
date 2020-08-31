@@ -62,13 +62,13 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
     def on_print_stopped(self, payload):
         self._logger.info("********** RPL LOGS => " + "on_print_stopped")
-        self.update_print_log(3)
         self.update_printer_status(0)
+        self.update_print_log(3)
 
     def on_print_done(self, payload):
         self._logger.info("********** RPL LOGS => " + "on_print_done")
-        self.update_print_log(2)
         self.update_printer_status(2)
+        self.update_print_log(2)
 
 
     ##~~ Helper Methods
@@ -104,7 +104,6 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         url = self.get_api_path() + "printers_api/edit"
         payload = {"name" : name, "status" : str(status)}
         result = requests.post(url, data = payload)
-        self.print_log_id = json.loads(result.text)["id"]
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: " + str(status))
 
@@ -119,6 +118,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
                     "print_time" : metadata["Build time"],
                     "filament_weight" : metadata["Plastic weight"]}
         result = requests.post(url, data = payload)
+        self.print_log_id = json.loads(result.text)["id"]
         self._logger.info("********** RPL LOGS => " + "Post Result: " + result.text)
         self._logger.info("********** RPL LOGS => " + "Printer Status updated to: 1")
 
