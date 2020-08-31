@@ -77,6 +77,9 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     def get_printer_name(self):
         return self._settings.get(["printer_name"])
 
+    def get_file_path(self):
+        return "/home/pi/.octoprint/uploads/"
+
     def create_printer(self):
         # Create Printer if_not_exists
         url = self.get_api_path() + "printers_api"
@@ -117,7 +120,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
     def find_meta_data(self, path, *args):
         # initial setup
-        path = path
+        self._logger.info("********** RPL LOGS => " + "Path: " + path)
+        path = self.get_file_path() + path
         dictionary = dict()
         for arg in args:
             dictionary[arg] = ""
