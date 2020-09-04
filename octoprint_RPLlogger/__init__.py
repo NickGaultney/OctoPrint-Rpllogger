@@ -33,6 +33,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
     ##~~ SettingsPlugin mixin
 
+    # These are the default values for the plugin's settings. These values
+    # can be changed through the Octoprint Web Interface
     def get_settings_defaults(self):
         return dict(
             url="http://10.147.20.155:3000",
@@ -48,7 +50,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     ##~~ EventPlugin Mixin
 
     def on_event(self, event, payload):
-        # Verify printer name exists
+        # If there is no printer name, ignore this plugin
         if self.get_printer_name() == "":
             return
 
