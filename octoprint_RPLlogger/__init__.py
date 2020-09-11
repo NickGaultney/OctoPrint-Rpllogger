@@ -38,7 +38,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     def get_settings_defaults(self):
         return dict(
             url="http://10.147.20.155:3000",
-            printer_name=""
+            printer_name="",
+            authentication_token=""
         )
 
     def get_template_configs(self):
