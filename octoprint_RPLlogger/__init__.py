@@ -106,7 +106,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         name = self.get_printer_name()
         payload = {"name" : self.get_printer_name(), "status" : "0"}
 
-        result = requests.post(url, data = payload)
+        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
+        result = requests.post(url, data = payload, headers = head)
         self.log("Printer Created: " + name)
 
     def update_printer_status(self, status):
@@ -114,8 +115,8 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         url = self.get_api_path() + "printers_api/edit"
         payload = {"name" : name, "status" : str(status)}
 
-        result = requests.post(url, data = payload)
-        self.log("Printer Status updated to: " + str(status))
+        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
+        result = requests.post(url, data = payload, headers = head)
 
     def create_print_log(self, payload):
         url = self.get_api_path() + "print_logs_api"
@@ -126,18 +127,18 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
                     "status" : "1", 
                     "print_time" : metadata["Build time"],
                     "filament_weight" : metadata["Plastic weight"]}
+        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
 
-        result = requests.post(url, data = payload)
+        result = requests.post(url, data = payload, headers = head)
         self.set_log_id(result.text)
-        self.log("Printer Status updated to: 1")
 
     def update_print_log(self, status):
         if self.print_log_id == None: return
 
         url = self.get_api_path() + "print_logs_api/edit"
         payload = {"id" : self.print_log_id, "status" : status}
-        result = requests.post(url, data = payload)
-        self.log("Printer Status updated to: " + status)
+        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
+        result = requests.post(url, data = payload, headers = head)
 
     def log(self, message):
         self._logger.info("********** RPL LOGS => " + message)
