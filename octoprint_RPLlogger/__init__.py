@@ -100,14 +100,17 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
     def set_log_id(self, string_payload):
         self.print_log_id = json.loads(string_payload)["id"]
 
+    def post(self, url, payload):
+        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
+        return requests.post(url, data = payload, headers = head)
+
     # Create Printer if_not_exists
     def create_printer(self):
         url = self.get_api_path() + "printers_api"
         name = self.get_printer_name()
         payload = {"name" : self.get_printer_name(), "status" : "0"}
 
-        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
-        result = requests.post(url, data = payload, headers = head)
+        result = self.post(url, payload)
         self.log("Printer Created: " + name)
 
     def update_printer_status(self, status):
@@ -115,21 +118,19 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
         url = self.get_api_path() + "printers_api/edit"
         payload = {"name" : name, "status" : str(status)}
 
-        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
-        result = requests.post(url, data = payload, headers = head)
+        result = self.post(url, payload)
 
-    def create_print_log(self, payload):
+    def create_print_log(self, print_payload):
         url = self.get_api_path() + "print_logs_api"
         name = self.get_printer_name()
-        metadata = self.find_meta_data(payload["path"], 'Build time', 'Plastic weight')
+        metadata = self.find_meta_data(print_payload["path"], 'Build time', 'Plastic weight')
         payload = { "printer_name" : name, 
-                    "file_name" : payload["name"], 
+                    "file_name" : print_payload["name"], 
                     "status" : "1", 
                     "print_time" : metadata["Build time"],
                     "filament_weight" : metadata["Plastic weight"]}
-        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
 
-        result = requests.post(url, data = payload, headers = head)
+        result = self.post(url, payload)
         self.set_log_id(result.text)
 
     def update_print_log(self, status):
@@ -137,8 +138,7 @@ class RplloggerPlugin(octoprint.plugin.SettingsPlugin,
 
         url = self.get_api_path() + "print_logs_api/edit"
         payload = {"id" : self.print_log_id, "status" : status}
-        head = { "X-Api-Token" : self._settings.get(["authentication_token"])}
-        result = requests.post(url, data = payload, headers = head)
+        result = self.post(url, payload)
 
     def log(self, message):
         self._logger.info("********** RPL LOGS => " + message)
